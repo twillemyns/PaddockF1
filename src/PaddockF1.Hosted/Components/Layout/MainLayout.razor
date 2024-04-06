@@ -1,23 +1,87 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="body">
+    <div>
+        <nav class="uk-navbar-container uk-navbar-primary" style="padding: 0 20px 0 20px; height: 80px" uk-navbar>
+            <div class="uk-navbar-left">
+                <ul class="uk-navbar-nav">
+                    <li>Pilotes</li>
+                    <li>Ecuries</li>
+                    <li>Calendrier</li>
+                    <li>Forum</li>
+                </ul>
+            </div>
+            <div class="uk-navbar-center">
+                <a class="uk-navbar-item uk-logo" href="/" style="font-family: Payback,serif; font-size: 50px">PaddockF1</a>
+            </div>
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    <AuthorizeView>
+                        <Authorized>
+                            <li>
+                                <NavLink href="Account/Manage">
+                                    <button class="uk-button uk-button-primary uk-border-rounded">Mon compte</button>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink href="Account/Logout">
+                                    <button class="uk-button uk-button-primary uk-border-rounded">Se déconnecter</button>
+                                </NavLink>
+                            </li>
+                        </Authorized>
+                        <NotAuthorized>
+                            <li>
+                                <NavLink href="Account/Login">
+                                    <button class="uk-button uk-button-primary uk-border-rounded">Se connecter</button>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink href="Account/Register">
+                                    <button class="uk-button uk-button-primary uk-border-rounded">S'inscrire</button>
+                                </NavLink>
+                            </li>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </ul>
+            </div>
+        </nav>
+
+        <main>
+            @Body
+        </main>
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    <footer class="uk-navbar-container uk-padding-small" style="padding: 20px 40px 20px 40px; bottom: 0; background-color: #2d2d2d">
+        <div uk-navbar>
+            <div class="uk-navbar-left">
+                <a href="/" class="uk-navbar-item uk-logo uk-link-muted" style="font-family: Payback,serif; font-size: 30px">PaddockF1</a>
+            </div>
+            <div class="uk-navbar-center">
+                <ul class="uk-margin-remove uk-list uk-link-muted">
+                    <li >
+                        <a href="#">Pilotes</a>
+                    </li>
+                    <li class="uk-margin-remove">
+                        <a href="#">Ecuries</a>
+                    </li>
+                    <li class="uk-margin-remove">
+                        <a href="#">Calendrier</a>
+                    </li>
+                    <li class="uk-margin-remove">
+                        <a href="#">Forum</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="uk-navbar-right">
+                <ul class="uk-margin-remove uk-list uk-link-muted">
+                    <li class="uk-margin-remove">
+                        <a href="#">Mentions légales</a>
+                    </li>
+                    <li class="uk-margin-remove">
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+    </footer>
 </div>
