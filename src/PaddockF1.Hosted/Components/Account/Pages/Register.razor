@@ -15,39 +15,44 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Inscription</PageTitle>
 
-<h1>Register</h1>
+<h2>Inscription</h2>
 
-<div class="row">
-    <div class="col-md-4">
+<div class="">
+    <div class="">
         <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
+        <EditForm class="uk-form-stacked" Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
+            <h3>Créer un nouveau compte</h3>
             <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
+            <ValidationSummary class="uk-text-danger" role="alert" />
+            <div class="uk-margin">
+                <label for="username" class="uk-form-label">Nom d'utilisateur</label>
+                <InputText @bind-Value="Input.UserName" class="uk-input uk-form-width-large" autocomplete="username" aria-required="true" placeholder="Nom d'utilisateur" />
+                <ValidationMessage For="() => Input.UserName" class="uk-text-danger" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
+            <div class="uk-margin">
+                <label for="email" class="uk-form-label">Email</label>
+                <InputText @bind-Value="Input.Email" class="uk-input uk-form-width-large" autocomplete="username" aria-required="true" placeholder="nom@exemple.com" />
+                <ValidationMessage For="() => Input.Email" class="uk-text-danger" />
             </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="confirm-password">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+            <div class="uk-margin">
+                <label for="password" class="uk-form-label">Mot de passe</label>
+                <InputText type="password" @bind-Value="Input.Password" class="uk-input uk-form-width-large" autocomplete="new-password" aria-required="true" placeholder="Mot de passe" />
+                <ValidationMessage For="() => Input.Password" class="uk-text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <div class="uk-margin">
+                <label for="confirm-password" class="uk-form-label">Confirmer le mot de passe</label>
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="uk-input uk-form-width-large" autocomplete="new-password" aria-required="true" placeholder="Réécrire le mot de passe" />
+                <ValidationMessage For="() => Input.ConfirmPassword" class="uk-text-danger" />
+            </div>
+            <button type="submit" class="uk-button uk-button-primary uk-border-rounded">S'incrire</button>
         </EditForm>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="">
         <section>
-            <h3>Use another service to register.</h3>
+            <h3>Utilisez un autre service pour vous inscrire.</h3>
             <hr />
             <ExternalLoginPicker />
         </section>
@@ -63,13 +68,13 @@
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
-    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+    private string? Message => identityErrors is null ? null : $"Erreur: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        await UserStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
@@ -80,7 +85,7 @@
             return;
         }
 
-        Logger.LogInformation("User created a new account with password.");
+        Logger.LogInformation("L'utilisateur à créé un nouveau compte avec mot de passe.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
@@ -110,8 +115,8 @@
         }
         catch
         {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+            throw new InvalidOperationException($"Ne peut pas créer une instance de: '{nameof(ApplicationUser)}'. " +
+                $"Vérifiez que '{nameof(ApplicationUser)}' n'est pas une classe abstraite et qu'il possède un constructeur sans paramètres.");
         }
     }
 
@@ -119,7 +124,7 @@
     {
         if (!UserManager.SupportsUserEmail)
         {
-            throw new NotSupportedException("The default UI requires a user store with email support.");
+            throw new NotSupportedException("L’interface utilisateur par défaut nécessite un magasin utilisateur avec support par mail.");
         }
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
@@ -127,19 +132,24 @@
     private sealed class InputModel
     {
         [Required]
+        [StringLength(50)]
+        [Display(Name = "Nom d'utilisateur")]
+        public string UserName { get; set; } = "";
+        
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Le {0} doit avoir au minimum {2} caractères et au maximum {1} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Mot de passe")]
         public string Password { get; set; } = "";
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(Name = "Confirmer le mot de passe")]
+        [Compare("Password", ErrorMessage = "Le mot de passe ne correspond pas à la confirmation.")]
         public string ConfirmPassword { get; set; } = "";
     }
 }
