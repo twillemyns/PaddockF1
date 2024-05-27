@@ -8,25 +8,25 @@
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<Disable2fa> Logger
 
-<PageTitle>Disable two-factor authentication (2FA)</PageTitle>
+<PageTitle>Désactiver l'authentification à 2 facteurs (2FA)</PageTitle>
 
 <StatusMessage />
-<h3>Disable two-factor authentication (2FA)</h3>
+<h3>Désactiver l'authentification à 2 facteurs (2FA)</h3>
 
-<div class="alert alert-warning" role="alert">
+<div class="uk-alert uk-alert-warning" role="alert">
     <p>
-        <strong>This action only disables 2FA.</strong>
+        <strong>Cette action désactive uniquement l'authentification à 2 facteurs.</strong>
     </p>
     <p>
-        Disabling 2FA does not change the keys used in authenticator apps. If you wish to change the key
-        used in an authenticator app you should <a href="Account/Manage/ResetAuthenticator">reset your authenticator keys.</a>
+        Désactiver l'authentification à 2 facteurs ne change pas les clés utilisées dans les applications d'authentification.
+        Si vous souhaitez changer la clé utilisée dans une application d'authentification, vous devriez <a href="Account/Manage/ResetAuthenticator">réinitialiser vos clés d'authentification.</a>
     </p>
 </div>
 
 <div>
     <form @formname="disable-2fa" @onsubmit="OnSubmitAsync" method="post">
         <AntiforgeryToken />
-        <button class="btn btn-danger" type="submit">Disable 2FA</button>
+        <button class="uk-button uk-button-danger" type="submit">Désactiver le 2FA</button>
     </form>
 </div>
 
@@ -42,7 +42,7 @@
 
         if (HttpMethods.IsGet(HttpContext.Request.Method) && !await UserManager.GetTwoFactorEnabledAsync(user))
         {
-            throw new InvalidOperationException("Cannot disable 2FA for user as it's not currently enabled.");
+            throw new InvalidOperationException("Impossible de désactiver le 2FA pour l'utilisateur car il n'est pas actuellement activé.");
         }
     }
 
@@ -51,14 +51,14 @@
         var disable2faResult = await UserManager.SetTwoFactorEnabledAsync(user, false);
         if (!disable2faResult.Succeeded)
         {
-            throw new InvalidOperationException("Unexpected error occurred disabling 2FA.");
+            throw new InvalidOperationException("Une erreur inattendue s'est produite lors de la désactivation du 2FA.");
         }
 
         var userId = await UserManager.GetUserIdAsync(user);
-        Logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", userId);
+        Logger.LogInformation("L'utilisateur avec l'ID '{UserId}' a désactivé le 2FA.", userId);
         RedirectManager.RedirectToWithStatus(
             "Account/Manage/TwoFactorAuthentication",
-            "2fa has been disabled. You can reenable 2fa when you setup an authenticator app",
+            "2FA a été désactivé. Vous pouvez réactiver le 2FA lorsque vous configurez une application d'authentification",
             HttpContext);
     }
 }

@@ -1,16 +1,17 @@
 ﻿@inherits LayoutComponentBase
 @layout AccountLayout
 
-<h1>Manage your account</h1>
+<h2>Gestion du compte</h2>
 
 <div>
-    <h2>Change your account settings</h2>
+    <h3>Changer les paramètres du compte</h3>
     <hr />
-    <div class="row">
-        <div class="col-md-3">
+    <div class="uk-flex">
+        <div class="">
             <ManageNavMenu />
         </div>
-        <div class="col-md-9">
+        <hr class="uk-divider-vertical"/>
+        <div class="">
             @Body
         </div>
     </div>

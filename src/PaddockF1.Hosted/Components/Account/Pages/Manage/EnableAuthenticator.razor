@@ -13,8 +13,7 @@
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<EnableAuthenticator> Logger
 
-<PageTitle>Configure authenticator app</PageTitle>
-
+<h2>Configurer l'application d'authentification</h2>
 @if (recoveryCodes is not null)
 {
     <ShowRecoveryCodes RecoveryCodes="recoveryCodes.ToArray()" StatusMessage="@message" />
@@ -22,42 +21,45 @@
 else
 {
     <StatusMessage Message="@message" />
-    <h3>Configure authenticator app</h3>
+    //français
+    <h3>Configurer l'application d'authentification</h3>
+    
     <div>
-        <p>To use an authenticator app go through the following steps:</p>
-        <ol class="list">
+        <p>Pour utiliser une application d'authentification, veuillez suivre les étapes suivantes:</p>
+        <ol class="uk-list">
             <li>
                 <p>
-                    Download a two-factor authenticator app like Microsoft Authenticator for
-                    <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> and
-                    <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> or
-                    Google Authenticator for
-                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> and
+                    Téléchergez une application d'authentification à deux facteurs comme Microsoft Authenticator pour
+                    <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> et
+                    <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> ou
+                    Google Authenticator pour
+                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> et
                     <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
                 </p>
             </li>
             <li>
-                <p>Scan the QR Code or enter this key <kbd>@sharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
+                <p>Scannez le QR Code ou entrez cette clé <kbd>@sharedKey</kbd> dans votre application d'authentification à 2 facteurs. Les espaces et les majuscules n'ont pas d'importance.</p>
+                <div class="uk-alert">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
                 <div></div>
                 <div data-url="@authenticatorUri"></div>
             </li>
             <li>
                 <p>
-                    Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
-                    with a unique code. Enter the code in the confirmation box below.
+                    Une fois que vous avez scanné le code QR ou entré la clé ci-dessus, 
+                    votre application d'authentification à deux facteurs vous fournira un code unique. 
+                    Entrez le code dans la boîte de confirmation ci-dessous.
                 </p>
-                <div class="row">
-                    <div class="col-md-6">
-                        <EditForm Model="Input" FormName="send-code" OnValidSubmit="OnValidSubmitAsync" method="post">
+                <div class="">
+                    <div class="">
+                        <EditForm class="uk-form-stacked" Model="Input" FormName="send-code" OnValidSubmit="OnValidSubmitAsync" method="post">
                             <DataAnnotationsValidator />
-                            <div class="form-floating mb-3">
-                                <InputText @bind-Value="Input.Code" class="form-control" autocomplete="off" placeholder="Please enter the code." />
-                                <label for="code" class="control-label form-label">Verification Code</label>
-                                <ValidationMessage For="() => Input.Code" class="text-danger" />
+                            <div class="uk-margin">
+                                <label for="code" class="uk-form-label">Code de vérification</label>
+                                <InputText @bind-Value="Input.Code" class="form-control" autocomplete="off" placeholder="Veuillez entrer lz code" />
+                                <ValidationMessage For="() => Input.Code" class="uk-text-danger" />
                             </div>
-                            <button type="submit" class="w-100 btn btn-lg btn-primary">Verify</button>
-                            <ValidationSummary class="text-danger" role="alert" />
+                            <button type="submit" class="uk-button uk-button-primary uk-button-large">Verify</button>
+                            <ValidationSummary class="uk-text-danger" role="alert" />
                         </EditForm>
                     </div>
                 </div>
@@ -98,15 +100,15 @@ else
 
         if (!is2faTokenValid)
         {
-            message = "Error: Verification code is invalid.";
+            message = "Erreur: Le code de vérification est invalide.";
             return;
         }
 
         await UserManager.SetTwoFactorEnabledAsync(user, true);
         var userId = await UserManager.GetUserIdAsync(user);
-        Logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+        Logger.LogInformation("L'utilisateur avec l'ID '{UserId}' à activé le 2FA avec une application d'authentification.", userId);
 
-        message = "Your authenticator app has been verified.";
+        message = "Votre application d'authentification à bien été vérifiée.";
 
         if (await UserManager.CountRecoveryCodesAsync(user) == 0)
         {
@@ -164,9 +166,9 @@ else
     private sealed class InputModel
     {
         [Required]
-        [StringLength(7, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [StringLength(7, ErrorMessage = "Le {0} doit avoir au minimum {2} caractères et au maximul {1} caractères.", MinimumLength = 6)]
         [DataType(DataType.Text)]
-        [Display(Name = "Verification Code")]
+        [Display(Name = "Code de vérification")]
         public string Code { get; set; } = "";
     }
 }

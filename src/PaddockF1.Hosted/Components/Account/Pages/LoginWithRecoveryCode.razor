@@ -9,14 +9,15 @@
 @inject IdentityRedirectManager RedirectManager
 @inject ILogger<LoginWithRecoveryCode> Logger
 
-<PageTitle>Recovery code verification</PageTitle>
+<PageTitle>Vérification du code de récupération</PageTitle>
 
-<h1>Recovery code verification</h1>
+<h1>Vérification du code de récupération</h1>
 <hr />
 <StatusMessage Message="@message" />
 <p>
-    You have requested to log in with a recovery code. This login will not be remembered until you provide
-    an authenticator app code at log in or disable 2FA and log in again.
+    Vous avez demandé à vous connecter avec un code de récupération. Cette connexion ne sera pas mémorisée
+    jusqu'à ce que vous fournissiez un code d'application d'authentification à la connexion ou que vous désactiviez
+    l'authentification à deux facteurs et que vous vous connectiez à nouveau.
 </p>
 <div class="row">
     <div class="col-md-4">
@@ -25,10 +26,10 @@
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.RecoveryCode" class="form-control" autocomplete="off" placeholder="RecoveryCode" />
-                <label for="recovery-code" class="form-label">Recovery Code</label>
+                <label for="recovery-code" class="form-label">Code de récupération</label>
                 <ValidationMessage For="() => Input.RecoveryCode" class="text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Se connecter</button>
         </EditForm>
     </div>
 </div>
@@ -47,7 +48,7 @@
     {
         // Ensure the user has gone through the username & password screen first
         user = await SignInManager.GetTwoFactorAuthenticationUserAsync() ??
-            throw new InvalidOperationException("Unable to load two-factor authentication user.");
+            throw new InvalidOperationException("Impossible de charger l'utilisateur via l'authentification à deux facteurs.");
     }
 
     private async Task OnValidSubmitAsync()
@@ -60,18 +61,18 @@
 
         if (result.Succeeded)
         {
-            Logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", userId);
+            Logger.LogInformation("L'utilisateur avec l'ID: '{UserId}' s'est connecté avec un code de récupération.", userId);
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.IsLockedOut)
         {
-            Logger.LogWarning("User account locked out.");
+            Logger.LogWarning("Compte utilisateur bloqué.");
             RedirectManager.RedirectTo("Account/Lockout");
         }
         else
         {
-            Logger.LogWarning("Invalid recovery code entered for user with ID '{UserId}' ", userId);
-            message = "Error: Invalid recovery code entered.";
+            Logger.LogWarning("Code de récupération invalide pour l'utilisateur avec l'ID: '{UserId}' ", userId);
+            message = "Erreur: Code de récupération invalide.";
         }
     }
 
@@ -79,7 +80,7 @@
     {
         [Required]
         [DataType(DataType.Text)]
-        [Display(Name = "Recovery Code")]
+        [Display(Name = "Code de récupération")]
         public string RecoveryCode { get; set; } = "";
     }
 }

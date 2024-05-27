@@ -1,58 +1,70 @@
 ﻿@inherits LayoutComponentBase
 
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
 <div class="body">
     <div>
-        <nav class="uk-navbar-container uk-navbar-primary" style="padding: 0 20px 0 20px; height: 80px" uk-navbar>
-            <div class="uk-navbar-left">
-                <ul class="uk-navbar-nav">
-                    <li>Pilotes</li>
-                    <li>Ecuries</li>
-                    <li>Calendrier</li>
-                    <li>Forum</li>
-                </ul>
-            </div>
-            <div class="uk-navbar-center">
-                <a class="uk-navbar-item uk-logo" href="/" style="font-family: Payback,serif; font-size: 50px">PaddockF1</a>
-            </div>
-            <div class="uk-navbar-right">
-                <ul class="uk-navbar-nav">
-                    <AuthorizeView>
-                        <Authorized>
-                            <li>
-                                <NavLink href="Account/Manage">
-                                    <button class="uk-button uk-button-primary uk-border-rounded">Mon compte</button>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink href="Account/Logout">
-                                    <button class="uk-button uk-button-primary uk-border-rounded">Se déconnecter</button>
-                                </NavLink>
-                            </li>
-                        </Authorized>
-                        <NotAuthorized>
-                            <li>
-                                <NavLink href="Account/Login">
-                                    <button class="uk-button uk-button-primary uk-border-rounded">Se connecter</button>
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink href="Account/Register">
-                                    <button class="uk-button uk-button-primary uk-border-rounded">S'inscrire</button>
-                                </NavLink>
-                            </li>
-                        </NotAuthorized>
-                    </AuthorizeView>
-                </ul>
-            </div>
-        </nav>
-
-        <main>
+        <header>
+            <nav class="uk-navbar-container uk-navbar-primary uk-navbar" style="padding: 0 20px 0 20px; height: 80px" uk-navbar>
+                <div class="uk-navbar-left">
+                    <ul class="uk-navbar-nav">
+                        <li>Pilotes</li>
+                        <li>Ecuries</li>
+                        <li>Calendrier</li>
+                        <li>Forum</li>
+                    </ul>
+                </div>
+                <div class="uk-navbar-center">
+                    <a class="uk-navbar-item uk-logo" href="/">
+                        <h1 style="font-family: Payback,serif; font-size: 50px">PaddockF1</h1>
+                    </a>
+                </div>
+                <div class="uk-navbar-right">
+                    <ul class="uk-navbar-nav">
+                        <AuthorizeView>
+                            <Authorized>
+                                <li>
+                                    <button class="uk-button uk-button-primary uk-border-rounded">
+                                        <NavLink class="uk-link-reset" href="Account/Manage">
+                                            Mon compte
+                                        </NavLink>
+                                    </button>
+                                </li>
+                                <li>
+                                    <form action="Account/Logout" method="post">
+                                        <AntiforgeryToken/>
+                                        <input type="hidden" name="ReturnUrl" value="@currentUrl"/>
+                                        <button type="submit" class="uk-button uk-button-primary uk-border-rounded">
+                                            Se déconnecter
+                                        </button>
+                                    </form>
+                                </li>
+                            </Authorized>
+                            <NotAuthorized>
+                                <li>
+                                    <NavLink href="Account/Login">
+                                        <button class="uk-button uk-button-primary uk-border-rounded">Se connecter</button>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink href="Account/Register">
+                                        <button class="uk-button uk-button-primary uk-border-rounded">S'inscrire</button>
+                                    </NavLink>
+                                </li>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <main class="uk-container uk-margin-top">
             @Body
         </main>
     </div>
 
-    <footer class="uk-navbar-container uk-padding-small" style="padding: 20px 40px 20px 40px; bottom: 0; background-color: #2d2d2d">
-        <div uk-navbar>
+    <footer>
+        <div class="uk-navbar-container uk-padding-small uk-navbar" style="padding: 20px 40px 20px 40px; bottom: 0; background-color: #2d2d2d" uk-navbar>
             <div class="uk-navbar-left">
                 <a href="/" class="uk-navbar-item uk-logo uk-link-muted" style="font-family: Payback,serif; font-size: 30px">PaddockF1</a>
             </div>
@@ -85,3 +97,25 @@
         </div>
     </footer>
 </div>
+
+@code
+{
+    private string currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
