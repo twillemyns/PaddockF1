@@ -1,0 +1,21 @@
+﻿@page "/TopicDetail/{id}"
+@rendermode InteractiveServer
+
+<PageTitle>@_topic.Title - PaddockF1</PageTitle>
+
+<h2>@_topic.Title</h2>
+
+@* Liste tags *@
+
+<p>@_topic.Description</p>
+
+<div class="uk-grid-small" uk-grid>
+    @foreach (var message in _topic.Messages)
+    {
+        <div class="uk-card uk-card-default">
+            <div class="uk-card-header">
+                <h5>@message.</h5>
+            </div>
+        </div>
+    }
+</div>

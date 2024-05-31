@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PaddockF1.Hosted.Client.Pages;
 using PaddockF1.Hosted.Components;
 using PaddockF1.Hosted.Components.Account;
 using PaddockF1.Hosted.Data;
+using PaddockF1.Module.Forum;
+using PaddockF1.Module.Forum.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+#region authentification
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -75,7 +78,9 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(PaddockF1.Hosted.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(
+        typeof(PaddockF1.Hosted.Client._Imports).Assembly,
+        typeof(PaddockF1.Module.Forum.Components._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
