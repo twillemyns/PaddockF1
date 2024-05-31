@@ -9,12 +9,15 @@
 
 <p>@_topic.Description</p>
 
-<div class="uk-grid-small" uk-grid>
+<div class="uk-grid-small uk-child-width" uk-grid>
     @foreach (var message in _topic.Messages)
     {
         <div class="uk-card uk-card-default">
             <div class="uk-card-header">
                 <h5>@message.</h5>
+            </div>
+            <div class="uk-card-body">
+                <p>@message.Content</p>
             </div>
         </div>
     }
