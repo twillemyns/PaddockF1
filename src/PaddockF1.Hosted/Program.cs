@@ -56,6 +56,17 @@ else
     app.UseHsts();
 }
 
+#if DEBUG
+
+using (var scope = app.Services.CreateScope())
+{
+    var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var forumDbContext = scope.ServiceProvider.GetRequiredService<ForumContext>();
+    DbInitializer.Initialize(appDbContext, forumDbContext);
+}
+
+#endif
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
