@@ -13,6 +13,8 @@ namespace PaddockF1.Hosted.Data
             {
                 entity.Ignore(m => m.PhoneNumber);
                 entity.Ignore(m => m.PhoneNumberConfirmed);
+                entity.HasMany(m => m.Topics).WithOne().HasForeignKey(m => m.AuthorId);
+                entity.HasMany(m => m.Messages).WithOne().HasForeignKey(m => m.UserId);
             });
         }
     }

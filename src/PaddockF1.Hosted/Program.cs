@@ -37,6 +37,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 
+#endregion
+
+builder.Services.AddForum(connectionString);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
