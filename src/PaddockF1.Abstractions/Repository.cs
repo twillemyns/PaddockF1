@@ -7,7 +7,7 @@ public class Repository<TEntity, TContext>(TContext context) : IRepository<TEnti
     where TEntity : class
     where TContext : DbContext
 {
-    private readonly TContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    protected readonly TContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     /// <summary>
     /// <inheritdoc cref="IRepository{TEntity, TContext}.Add(TEntity)" />
