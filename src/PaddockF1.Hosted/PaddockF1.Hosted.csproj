@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PaddockF1.Module.Authentication\PaddockF1.Module.Authentication.csproj" />
     <ProjectReference Include="..\PaddockF1.Hosted.Client\PaddockF1.Hosted.Client.csproj" />
     <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
@@ -21,10 +20,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="..\PaddockF1.Module.Forum\PaddockF1.Module.Forum.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Layout\" />
   </ItemGroup>
 
 </Project>
