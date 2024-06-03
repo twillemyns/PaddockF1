@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PaddockF1.Hosted.Components;
+using PaddockF1.Hosted.Components.Account;
 using PaddockF1.Hosted.Data;
-using PaddockF1.Module.Authentication;
-using PaddockF1.Module.Authentication.Data;
 using PaddockF1.Module.Forum;
 using PaddockF1.Module.Forum.Data;
 
@@ -12,11 +14,33 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+#region authentification
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
 var connectionString = builder.Configuration.GetConnectionString("SQLite") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-builder.Services.AddModuleAuthentication(connectionString);
-
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
+
+#endregion
 
 builder.Services.AddForum(connectionString);
 
@@ -56,8 +80,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(
         typeof(PaddockF1.Hosted.Client._Imports).Assembly,
-        typeof(PaddockF1.Module.Forum.Components._Imports).Assembly,
-        typeof(PaddockF1.Module.Authentication.Components.Account.Pages._Imports).Assembly);
+        typeof(PaddockF1.Module.Forum.Components._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

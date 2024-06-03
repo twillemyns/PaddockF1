@@ -1,0 +1,64 @@
+﻿@page "/Account/Manage"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@using PaddockF1.Hosted.Data
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Profil</PageTitle>
+
+<h3>Profil</h3>
+<StatusMessage />
+
+<div class="">
+    <div class="">
+        <EditForm class="uk-form-stacked" Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="uk-text-danger" role="alert" />
+            <div class="uk-margin">
+                <label for="username" class="uk-form-label">Nom d'utilisateur</label>
+                <InputText type="text" @bind-Value="Input.UserName" class="uk-input uk-form-width-large" placeholder="Veuillez choisir un nouveau nom d'utilisateur." />
+            </div>
+            <button type="submit" class="uk-button uk-button-large uk-button-primary">Sauvegarder</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private ApplicationUser user = default!;
+    private string? username;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        username = await UserManager.GetUserNameAsync(user);
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        user.UserName = Input.UserName;
+        await UserManager.UpdateAsync(user);
+        await SignInManager.RefreshSignInAsync(user);
+        RedirectManager.RedirectToCurrentPageWithStatus("Votre profil a bien été mis à jour.", HttpContext);
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [StringLength(50)]
+        [Display(Name = "Nom d'utilisateur")]
+        public string UserName { get; set; } = "";
+    }
+}
