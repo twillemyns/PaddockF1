@@ -21,12 +21,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Ignore(m => m.PhoneNumberConfirmed);
             entity.HasMany(m => m.Topics)
                 .WithOne(m => m.Author)
-                .HasForeignKey(m => m.AuthorId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
             entity.HasMany(m => m.Messages)
                 .WithOne(m => m.User)
-                .HasForeignKey(m => m.UserId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         builder.Entity<Topic>(entity =>
@@ -37,7 +37,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.HasMany(e => e.Messages)
                 .WithOne(e => e.Topic)
-                .HasForeignKey(e => e.TopicId);
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Message>(entity =>
@@ -46,8 +46,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Content).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.HasOne(e => e.Topic)
-                .WithMany(e => e.Messages)
-                .HasForeignKey(e => e.TopicId);
+                .WithMany(e => e.Messages);
         });
     }
 }

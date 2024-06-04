@@ -319,7 +319,8 @@ namespace PaddockF1.Hosted.Migrations
 
                     b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "User")
                         .WithMany("Messages")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Topic");
 
@@ -330,7 +331,8 @@ namespace PaddockF1.Hosted.Migrations
                 {
                     b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "Author")
                         .WithMany("Topics")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Author");
                 });

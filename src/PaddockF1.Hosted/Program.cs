@@ -39,6 +39,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 
+builder.Services.AddScoped<ApplicationService>(provider =>
+{
+    var context = provider.GetRequiredService<ApplicationDbContext>();
+
+    return new ApplicationService(new ApplicationUnit(context));
+} );
+
 #endregion
 
 var app = builder.Build();
