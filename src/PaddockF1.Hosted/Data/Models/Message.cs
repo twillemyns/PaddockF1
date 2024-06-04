@@ -1,4 +1,4 @@
-﻿namespace PaddockF1.Module.Forum.Models;
+﻿namespace PaddockF1.Hosted.Data.Models;
 
 public class Message
 {
@@ -9,6 +9,8 @@ public class Message
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public string UserId { get; set; } = default!;
+
+    public ApplicationUser User { get; set; } = default!;
     
     public Guid TopicId { get; set; }
     

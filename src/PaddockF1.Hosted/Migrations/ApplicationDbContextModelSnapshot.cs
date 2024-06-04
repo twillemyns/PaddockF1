@@ -15,7 +15,7 @@ namespace PaddockF1.Hosted.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -145,7 +145,7 @@ namespace PaddockF1.Hosted.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PaddockF1.Hosted.Data.ApplicationUser", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -203,7 +203,7 @@ namespace PaddockF1.Hosted.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("PaddockF1.Module.Forum.Models.Message", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,7 +220,6 @@ namespace PaddockF1.Hosted.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -229,17 +228,16 @@ namespace PaddockF1.Hosted.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("PaddockF1.Module.Forum.Models.Topic", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.Topic", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -257,7 +255,7 @@ namespace PaddockF1.Hosted.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Topic");
+                    b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -271,7 +269,7 @@ namespace PaddockF1.Hosted.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +278,7 @@ namespace PaddockF1.Hosted.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -295,7 +293,7 @@ namespace PaddockF1.Hosted.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -304,47 +302,47 @@ namespace PaddockF1.Hosted.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PaddockF1.Module.Forum.Models.Message", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.Message", b =>
                 {
-                    b.HasOne("PaddockF1.Module.Forum.Models.Topic", "Topic")
+                    b.HasOne("PaddockF1.Hosted.Data.Models.Topic", "Topic")
                         .WithMany("Messages")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "User")
                         .WithMany("Messages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Topic");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PaddockF1.Module.Forum.Models.Topic", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.Topic", b =>
                 {
-                    b.HasOne("PaddockF1.Hosted.Data.ApplicationUser", null)
+                    b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "Author")
                         .WithMany("Topics")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("PaddockF1.Hosted.Data.ApplicationUser", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Messages");
 
                     b.Navigation("Topics");
                 });
 
-            modelBuilder.Entity("PaddockF1.Module.Forum.Models.Topic", b =>
+            modelBuilder.Entity("PaddockF1.Hosted.Data.Models.Topic", b =>
                 {
                     b.Navigation("Messages");
                 });

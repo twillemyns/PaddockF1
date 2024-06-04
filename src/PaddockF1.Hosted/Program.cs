@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PaddockF1.Hosted.Components;
 using PaddockF1.Hosted.Components.Account;
 using PaddockF1.Hosted.Data;
-using PaddockF1.Module.Forum;
-using PaddockF1.Module.Forum.Data;
+using PaddockF1.Hosted.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,8 +41,6 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 
 #endregion
 
-builder.Services.AddForum(connectionString);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,8 +61,7 @@ else
 using (var scope = app.Services.CreateScope())
 {
     var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var forumDbContext = scope.ServiceProvider.GetRequiredService<ForumContext>();
-    DbInitializer.Initialize(appDbContext, forumDbContext);
+    DbInitializer.Initialize(appDbContext);
 }
 
 #endif
@@ -79,8 +75,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(
-        typeof(PaddockF1.Hosted.Client._Imports).Assembly,
-        typeof(PaddockF1.Module.Forum.Components._Imports).Assembly);
+        typeof(PaddockF1.Hosted.Client._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

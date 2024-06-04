@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using PaddockF1.Module.Forum.Models;
 
-namespace PaddockF1.Hosted.Data;
+namespace PaddockF1.Hosted.Data.Models;
 
 // Add profile data for application users by adding properties to the ApplicationUser class
 public class ApplicationUser : IdentityUser

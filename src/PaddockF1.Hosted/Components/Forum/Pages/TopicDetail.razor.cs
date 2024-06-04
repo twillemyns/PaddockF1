@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PaddockF1.Module.Forum.Data;
-using PaddockF1.Module.Forum.Models;
+using PaddockF1.Hosted.Data;
+using PaddockF1.Hosted.Data.Models;
 
-namespace PaddockF1.Module.Forum.Components.Pages;
+namespace PaddockF1.Hosted.Components.Forum.Pages;
 
 public partial class TopicDetail : ComponentBase
 {
-    [Inject] private ForumService ForumService { get; set; } = default!;
+    [Inject] private ApplicationService ApplicationService { get; set; } = default!;
     
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
 
     [Parameter] public string Id { get; set; } = default!;
 
-    private Topic _topic = default!;
+    private Topic? _topic;
     
     protected override void OnInitialized()
     {
-        _topic = ForumService.GetTopicById(Guid.Parse(Id));
+        _topic = ApplicationService.GetTopicById(Guid.Parse(Id));
         
         if (_topic == null)
         {
@@ -25,7 +25,7 @@ public partial class TopicDetail : ComponentBase
         }
         else
         {
-            _topic.Messages = ForumService.GetMessagesByTopicId(_topic.Id).ToList();
+            _topic.Messages = ApplicationService.GetMessagesByTopicId(_topic.Id).ToList();
         }
     }
 }

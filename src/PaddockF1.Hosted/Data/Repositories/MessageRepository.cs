@@ -1,13 +1,14 @@
 ﻿using PaddockF1.Abstractions;
-using PaddockF1.Module.Forum.Models;
+using PaddockF1.Hosted.Data.Models;
 
-namespace PaddockF1.Module.Forum.Data;
+namespace PaddockF1.Hosted.Data.Repositories;
 
-public class MessageRepository(ForumContext context) : Repository<Message, ForumContext>(context), IDisposable
+public sealed class MessageRepository(ApplicationDbContext context)
+    : Repository<Message, ApplicationDbContext>(context), IDisposable
 {
     private bool _disposed;
-    
-    protected virtual void Dispose(bool disposing)
+
+    private void Dispose(bool disposing)
     {
         if (!this._disposed)
         {
@@ -16,6 +17,7 @@ public class MessageRepository(ForumContext context) : Repository<Message, Forum
                 _context.Dispose();
             }
         }
+
         this._disposed = true;
     }
 

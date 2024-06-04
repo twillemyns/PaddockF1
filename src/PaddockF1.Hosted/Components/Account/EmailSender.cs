@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using MimeKit;
 using MimeKit.Text;
 using PaddockF1.Hosted.Data;
+using PaddockF1.Hosted.Data.Models;
 
 namespace PaddockF1.Hosted.Components.Account;
 

@@ -1,21 +1,53 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PaddockF1.Hosted.Data.Models;
 
-namespace PaddockF1.Hosted.Data
+namespace PaddockF1.Hosted.Data;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options)
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+        public DbSet<Topic> Topics { get; set; } = default!;
+        
+        public DbSet<Message> Messages { get; set; } = default!;
+    
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        protected override void OnModelCreating(ModelBuilder builder)
+        base.OnModelCreating(builder);
+        
+        builder.Entity<ApplicationUser>(entity =>
         {
-            base.OnModelCreating(builder);
-            
-            builder.Entity<ApplicationUser>(entity =>
-            {
-                entity.Ignore(m => m.PhoneNumber);
-                entity.Ignore(m => m.PhoneNumberConfirmed);
-                entity.HasMany(m => m.Topics).WithOne().HasForeignKey(m => m.AuthorId);
-                entity.HasMany(m => m.Messages).WithOne().HasForeignKey(m => m.UserId);
-            });
-        }
+            entity.Ignore(m => m.PhoneNumber);
+            entity.Ignore(m => m.PhoneNumberConfirmed);
+            entity.HasMany(m => m.Topics)
+                .WithOne(m => m.Author)
+                .HasForeignKey(m => m.AuthorId)
+                .IsRequired(false);
+            entity.HasMany(m => m.Messages)
+                .WithOne(m => m.User)
+                .HasForeignKey(m => m.UserId)
+                .IsRequired(false);
+        });
+
+        builder.Entity<Topic>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).IsRequired();
+            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.HasMany(e => e.Messages)
+                .WithOne(e => e.Topic)
+                .HasForeignKey(e => e.TopicId);
+        });
+
+        builder.Entity<Message>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Content).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.HasOne(e => e.Topic)
+                .WithMany(e => e.Messages)
+                .HasForeignKey(e => e.TopicId);
+        });
     }
 }

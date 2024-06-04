@@ -1,13 +1,13 @@
 ﻿using PaddockF1.Abstractions;
-using PaddockF1.Module.Forum.Models;
+using PaddockF1.Hosted.Data.Models;
 
-namespace PaddockF1.Module.Forum.Data;
+namespace PaddockF1.Hosted.Data.Repositories;
 
-public class TopicRepository(ForumContext context) : Repository<Topic, ForumContext>(context), IDisposable
+public sealed class TopicRepository(ApplicationDbContext context) : Repository<Topic, ApplicationDbContext>(context), IDisposable
 {
     private bool _disposed;
-    
-    protected virtual void Dispose(bool disposing)
+
+    private void Dispose(bool disposing)
     {
         if (!this._disposed)
         {

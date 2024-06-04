@@ -1,14 +1,12 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Identity;
-using PaddockF1.Module.Forum.Data;
-using PaddockF1.Module.Forum.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using PaddockF1.Hosted.Data.Models;
 
 namespace PaddockF1.Hosted.Data;
 
 public static class DbInitializer
 {
     
-    public static void Initialize(ApplicationDbContext appDbContext, ForumContext forumDbContext)
+    public static void Initialize(ApplicationDbContext appDbContext)
     {
         appDbContext.Database.EnsureCreated();
 
@@ -51,18 +49,18 @@ public static class DbInitializer
                 Title = "Welcome to the forum",
                 Description = "This is the first topic of the forum",
                 CreatedAt = DateTime.Now,
-                AuthorId = users[0].Id
+                // AuthorId = users[0].Id
             },
             new()
             {
                 Title = "Second topic",
                 Description = "This is the second topic of the forum",
                 CreatedAt = DateTime.Now,
-                AuthorId = users[1].Id
+                // AuthorId = users[1].Id
             }
         };
         
-        forumDbContext.Topics.AddRange(topics);
+        appDbContext.Topics.AddRange(topics);
         
         var messages = new Message[]
         {
@@ -70,35 +68,35 @@ public static class DbInitializer
             {
                 Content = "Hello, welcome to the forum",
                 CreatedAt = DateTime.Now,
-                UserId = users[0].Id,
+                // UserId = users[0].Id,
                 TopicId = topics[0].Id
             },
             new()
             {
                 Content = "Hello, this is the second topic",
                 CreatedAt = DateTime.Now,
-                UserId = users[1].Id,
+                // UserId = users[1].Id,
                 TopicId = topics[1].Id
             },
             new()
             {
                 Content = "This is a reply to the first topic",
                 CreatedAt = DateTime.Now,
-                UserId = users[1].Id,
+                // UserId = users[1].Id,
                 TopicId = topics[0].Id
             },
             new()
             {
                 Content = "This is a reply to the second topic",
                 CreatedAt = DateTime.Now,
-                UserId = users[0].Id,
+                // UserId = users[0].Id,
                 TopicId = topics[1].Id
             },
             
         };
         
-        forumDbContext.Messages.AddRange(messages);
-        forumDbContext.SaveChanges();
+        appDbContext.Messages.AddRange(messages);
+        appDbContext.SaveChanges();
 
     }
 }
