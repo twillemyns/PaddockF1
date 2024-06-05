@@ -7,24 +7,26 @@ namespace PaddockF1.Hosted.Data;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser>(options)
 {
-        public DbSet<Topic> Topics { get; set; } = default!;
-        
-        public DbSet<Message> Messages { get; set; } = default!;
-    
+    public DbSet<Topic> Topics { get; set; } = default!;
+
+    public DbSet<Message> Messages { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         builder.Entity<ApplicationUser>(entity =>
         {
             entity.Ignore(m => m.PhoneNumber);
             entity.Ignore(m => m.PhoneNumberConfirmed);
             entity.HasMany(m => m.Topics)
                 .WithOne(m => m.Author)
+                .HasForeignKey(m => m.AuthorId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
             entity.HasMany(m => m.Messages)
                 .WithOne(m => m.User)
+                .HasForeignKey(m => m.UserId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
         });
@@ -37,7 +39,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.HasMany(e => e.Messages)
                 .WithOne(e => e.Topic)
+                .HasForeignKey(m => m.TopicId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Author)
+                .WithMany(e => e.Topics)
+                .HasForeignKey(e => e.AuthorId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         builder.Entity<Message>(entity =>
@@ -46,7 +54,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.Property(e => e.Content).IsRequired();
             entity.Property(e => e.CreatedAt).IsRequired();
             entity.HasOne(e => e.Topic)
-                .WithMany(e => e.Messages);
+                .WithMany(e => e.Messages)
+                .HasForeignKey(e => e.TopicId)
+                .IsRequired();
+            entity.HasOne(e => e.User)
+                .WithMany(e => e.Messages)
+                .HasForeignKey(e => e.UserId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
         });
     }
 }

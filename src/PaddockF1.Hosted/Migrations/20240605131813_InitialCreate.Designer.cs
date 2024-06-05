@@ -11,7 +11,7 @@ using PaddockF1.Hosted.Data;
 namespace PaddockF1.Hosted.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240604211924_InitialCreate")]
+    [Migration("20240605131813_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
