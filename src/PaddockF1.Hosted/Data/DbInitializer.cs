@@ -24,7 +24,6 @@ public static class DbInitializer
                 UserName = "admin",
                 Email = "admin@admin.com",
                 EmailConfirmed = true
-                
             },
             new()
             {
@@ -49,14 +48,14 @@ public static class DbInitializer
                 Title = "Welcome to the forum",
                 Description = "This is the first topic of the forum",
                 CreatedAt = DateTime.Now,
-                // AuthorId = users[0].Id
+                AuthorId = users[0].Id
             },
             new()
             {
                 Title = "Second topic",
                 Description = "This is the second topic of the forum",
                 CreatedAt = DateTime.Now,
-                // AuthorId = users[1].Id
+                AuthorId = users[1].Id
             }
         };
         
@@ -68,28 +67,28 @@ public static class DbInitializer
             {
                 Content = "Hello, welcome to the forum",
                 CreatedAt = DateTime.Now,
-                // UserId = users[0].Id,
+                UserId = users[0].Id,
                 TopicId = topics[0].Id
             },
             new()
             {
                 Content = "Hello, this is the second topic",
                 CreatedAt = DateTime.Now,
-                // UserId = users[1].Id,
+                UserId = users[1].Id,
                 TopicId = topics[1].Id
             },
             new()
             {
                 Content = "This is a reply to the first topic",
                 CreatedAt = DateTime.Now,
-                // UserId = users[1].Id,
+                UserId = users[1].Id,
                 TopicId = topics[0].Id
             },
             new()
             {
                 Content = "This is a reply to the second topic",
                 CreatedAt = DateTime.Now,
-                // UserId = users[0].Id,
+                UserId = users[0].Id,
                 TopicId = topics[1].Id
             },
             

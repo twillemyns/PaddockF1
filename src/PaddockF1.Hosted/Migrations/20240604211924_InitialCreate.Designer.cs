@@ -11,7 +11,7 @@ using PaddockF1.Hosted.Data;
 namespace PaddockF1.Hosted.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240604144341_InitialCreate")]
+    [Migration("20240604211924_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -322,7 +322,8 @@ namespace PaddockF1.Hosted.Migrations
 
                     b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "User")
                         .WithMany("Messages")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Topic");
 
@@ -333,7 +334,8 @@ namespace PaddockF1.Hosted.Migrations
                 {
                     b.HasOne("PaddockF1.Hosted.Data.Models.ApplicationUser", "Author")
                         .WithMany("Topics")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Author");
                 });
