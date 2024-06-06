@@ -66,7 +66,7 @@ public class Repository<TEntity, TContext>(TContext context) : IRepository<TEnti
     {
         try
         {
-            return _context.Set<TEntity>().Where(predicate).ToList();
+            return _context.Set<TEntity>().Where(predicate);
         }
         catch (ArgumentNullException e)
         {
