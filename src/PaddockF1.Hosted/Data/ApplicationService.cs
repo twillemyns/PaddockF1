@@ -10,10 +10,12 @@ internal sealed class ApplicationService(ApplicationUnit appUnit)
     
     public IEnumerable<Topic> GetTopics() => appUnit.Topics.GetAll();
     
-    public IEnumerable<Topic> GetTopics(string search) => appUnit.Topics.GetAll(t => t.Title.Contains(search));
+    public IEnumerable<Topic> GetTopics(string search) => appUnit.Topics.GetAll(t => t.Title.StartsWith(search));
     
     // todo: ajout pagination voire virtualisation
     public IEnumerable<Message> GetMessagesByTopicId(Guid topicId) => appUnit.Messages.GetAll(m => m.TopicId == topicId);
+
+    public ApplicationUser? GetUserById(string userId) => appUnit.Users.Get(userId);
 
     #endregion
     
@@ -49,4 +51,6 @@ internal sealed class ApplicationService(ApplicationUnit appUnit)
     }
     
     #endregion
+
+
 }

@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using PaddockF1.Hosted.Components.Account;
 using PaddockF1.Hosted.Data;
 using PaddockF1.Hosted.Data.Models;
 
@@ -12,16 +10,16 @@ public partial class TopicDetail : ComponentBase
     [Inject] private ApplicationService ApplicationService { get; set; } = default!;
 
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject] private IdentityUserAccessor UserAccessor { get; set; } = default!;
-
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
-
+    
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    
     [Parameter] public string Id { get; set; } = default!;
     
     [SupplyParameterFromForm] private InputModel Model { get; set; } = new();
 
     private Topic? _topic;
+
+    private ApplicationUser? _user;
     
     protected override void OnInitialized()
     {
@@ -38,17 +36,28 @@ public partial class TopicDetail : ComponentBase
         }
     }
 
-    private async Task Callback()
+    protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authenticationState.User;
+        var userId = user.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+        
+        if (userId is null) return;
+        
+        _user = ApplicationService.GetUserById(userId);
+    }
+
+    private void Callback()
+    {
+        if (_user is null) return;
+        
         var message = new Message
         {
             TopicId = _topic!.Id,
-            User = await UserAccessor.GetRequiredUserAsync(HttpContext),
+            User = _user,
             Content = Model.Content,
         };
         ApplicationService.AddMessage(message);
-
-        StateHasChanged();
     }
 
     private sealed class InputModel

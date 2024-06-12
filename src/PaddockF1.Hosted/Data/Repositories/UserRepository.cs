@@ -6,24 +6,29 @@ namespace PaddockF1.Hosted.Data.Repositories;
 public class UserRepository(ApplicationDbContext dbContext)
     : Repository<ApplicationUser, ApplicationDbContext>(dbContext), IDisposable
 {
-        private bool _disposed;
-    
-        private void Dispose(bool disposing)
+    public ApplicationUser? Get(string guid)
+    {
+        return dbContext.Users.Find(guid);
+    }
+
+    private bool _disposed;
+
+    private void Dispose(bool disposing)
+    {
+        if (!this._disposed)
         {
-            if (!this._disposed)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    _context.Dispose();
-                }
+                _context.Dispose();
             }
-    
-            this._disposed = true;
         }
-    
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
+        this._disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 }
