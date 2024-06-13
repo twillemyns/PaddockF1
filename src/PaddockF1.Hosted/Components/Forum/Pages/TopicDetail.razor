@@ -1,4 +1,4 @@
-﻿@page "/TopicDetail/{id}"
+﻿@page "/forum/{id}"
 @using System.Globalization
 
 @rendermode InteractiveServer
@@ -28,7 +28,7 @@
     <AuthorizeView Context="authContext">
         <Authorized>
             <EditForm Model="@Model" OnSubmit="Callback" class="uk-padding-remove">
-                <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..." @bind-Value="Model.Content" style="resize: none"/>
+                <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..." @bind-Value="Model.Content" style="resize: vertical"/>
                 <button type="submit" class="uk-button uk-button-primary uk-margin">Envoyer</button>
             </EditForm>
         </Authorized>
