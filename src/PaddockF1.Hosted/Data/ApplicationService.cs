@@ -2,7 +2,7 @@
 
 namespace PaddockF1.Hosted.Data;
 
-internal sealed class ApplicationService(ApplicationUnit appUnit)
+public sealed class ApplicationService(ApplicationUnit appUnit)
 {
     #region Get
 
