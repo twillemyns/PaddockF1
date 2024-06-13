@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using PaddockF1.Hosted.Components.Shared;
 using PaddockF1.Hosted.Data;
 using PaddockF1.Hosted.Data.Models;
 
@@ -10,17 +11,17 @@ public partial class TopicDetail : ComponentBase
     [Inject] private ApplicationService ApplicationService { get; set; } = default!;
 
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
-    
+
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
-    
+
     [Parameter] public string Id { get; set; } = default!;
-    
+
     [SupplyParameterFromForm] private InputModel Model { get; set; } = new();
 
     private Topic? _topic;
 
     private ApplicationUser? _user;
-    
+
     protected override void OnInitialized()
     {
         _topic = ApplicationService.GetTopicById(Guid.Parse(Id));
@@ -38,19 +39,15 @@ public partial class TopicDetail : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authenticationState.User;
-        var userId = user.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
-        
-        if (userId is null) return;
-        
-        _user = ApplicationService.GetUserById(userId);
+        var userUtilities = new UserUtilities(AuthenticationStateProvider, ApplicationService);
+
+        _user = await userUtilities.GetCurrentUser();
     }
 
     private void Callback()
     {
         if (_user is null) return;
-        
+
         var message = new Message
         {
             TopicId = _topic!.Id,
@@ -65,4 +62,3 @@ public partial class TopicDetail : ComponentBase
         public string Content { get; set; } = string.Empty;
     }
 }
-
