@@ -48,7 +48,9 @@ public partial class TopicList : ComponentBase
             Author = _user
         };
         ApplicationService.AddTopic(topic);
-
+        
+        // todo: erreur pendant la redirection (essaye de rediriger alors que le forum n'est pas encore créé)
+        
         NavigationManager.NavigateTo($"/forum/{topic.Id}");
     }
 }
