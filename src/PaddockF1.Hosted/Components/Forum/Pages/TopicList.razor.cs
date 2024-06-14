@@ -17,13 +17,13 @@ public partial class TopicList : ComponentBase
 
     [SupplyParameterFromForm] public InputModel NewTopic { get; set; } = new();
 
-    private List<Topic> _topics = default!;
+    private IEnumerable<Topic> _topics = default!;
 
     private ApplicationUser? _user;
 
     protected override void OnInitialized()
     {
-        _topics = ApplicationService.GetTopics().ToList();
+        _topics = ApplicationService.GetTopics().OrderBy(x => x.CreatedAt).Reverse();
     }
 
     protected override async Task OnInitializedAsync()
