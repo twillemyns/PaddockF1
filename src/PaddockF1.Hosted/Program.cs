@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PaddockF1.Hosted.Client.Pages;
 using PaddockF1.Hosted.Components;
 using PaddockF1.Hosted.Components.Account;
 using PaddockF1.Hosted.Data;
+using PaddockF1.Hosted.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+#region authentification
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -37,6 +39,15 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
 
+builder.Services.AddScoped<ApplicationService>(provider =>
+{
+    var context = provider.GetRequiredService<ApplicationDbContext>();
+
+    return new ApplicationService(new ApplicationUnit(context));
+} );
+
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +63,16 @@ else
     app.UseHsts();
 }
 
+#if DEBUG
+
+using (var scope = app.Services.CreateScope())
+{
+    var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DbInitializer.Initialize(appDbContext);
+}
+
+#endif
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -60,7 +81,8 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(PaddockF1.Hosted.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(
+        typeof(PaddockF1.Hosted.Client._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

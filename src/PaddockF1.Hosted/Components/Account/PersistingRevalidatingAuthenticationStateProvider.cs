@@ -8,6 +8,7 @@ using PaddockF1.Hosted.Client;
 using PaddockF1.Hosted.Data;
 using System.Diagnostics;
 using System.Security.Claims;
+using PaddockF1.Hosted.Data.Models;
 
 namespace PaddockF1.Hosted.Components.Account
 {

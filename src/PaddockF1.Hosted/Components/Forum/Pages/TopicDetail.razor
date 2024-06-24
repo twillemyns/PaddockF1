@@ -1,0 +1,40 @@
+﻿@page "/forum/{id}"
+@using System.Globalization
+
+@rendermode InteractiveServer
+
+<PageTitle>@_topic!.Title - PaddockF1</PageTitle>
+
+<h2>@_topic!.Title</h2>
+
+@* Liste tags *@
+
+<p>@_topic.Description</p>
+
+<div class="uk-grid-small uk-child-width" uk-grid>
+    @foreach (var message in _topic.Messages)
+    {
+        <div class="uk-card uk-card-small uk-card-default">
+            <div class="uk-card-header">
+                <h5>@message.User.UserName</h5>
+                <p class="uk-text-meta">Envoyé le @message.CreatedAt.ToString("d MMMM yyyy à H:mm", CultureInfo.CreateSpecificCulture("fr-FR"))</p>
+            </div>
+            <div class="uk-card-body">
+                <p>@message.Content</p>
+            </div>
+        </div>
+    }
+
+    <AuthorizeView Context="authContext">
+        <Authorized>
+            <EditForm Model="@Model" OnSubmit="Callback" class="uk-padding-remove">
+                <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..." @bind-Value="Model.Content" style="resize: vertical"/>
+                <button type="submit" class="uk-button uk-button-primary uk-margin">Envoyer</button>
+            </EditForm>
+        </Authorized>
+        <NotAuthorized>
+            <a href="/Account/Login" class="uk-button uk-button-primary uk-border-rounded uk-margin">Si vous souhaitez interagir dans ce forum, connectez-vous ici</a>
+        </NotAuthorized>
+    </AuthorizeView>
+
+</div>

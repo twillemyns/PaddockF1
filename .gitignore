@@ -267,6 +267,9 @@ ServiceFabricBackup/
 *.ldf
 *.ndf
 
+# Docker files
+docker-compose.yml
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
