@@ -4,6 +4,10 @@ using PaddockF1.Hosted.Data.Repositories;
 
 namespace PaddockF1.Hosted.Data;
 
+/// <summary>
+/// Dépôt des données de l'application
+/// </summary>
+/// <param name="context"><inheritdoc cref="ApplicationDbContext"/></param>
 public class ApplicationUnit(ApplicationDbContext context) : IUnitOfWork
 {
     private TopicRepository? _topics;
@@ -12,6 +16,9 @@ public class ApplicationUnit(ApplicationDbContext context) : IUnitOfWork
 
     private UserRepository? _users;
 
+    /// <summary>
+    /// Dépôt des sujets de discussion
+    /// </summary>
     public TopicRepository Topics
     {
         get
@@ -21,7 +28,10 @@ public class ApplicationUnit(ApplicationDbContext context) : IUnitOfWork
             return _topics;
         }
     }
-
+    
+    /// <summary>
+    /// Dépôt des messages
+    /// </summary>
     public MessageRepository Messages
     {
         get
@@ -32,6 +42,9 @@ public class ApplicationUnit(ApplicationDbContext context) : IUnitOfWork
         }
     }
     
+    /// <summary>
+    /// Dépôt des utilisateurs
+    /// </summary>
     public UserRepository Users
     {
         get
@@ -63,6 +76,10 @@ public class ApplicationUnit(ApplicationDbContext context) : IUnitOfWork
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Sauvegarde les modifications effectuées en base de données
+    /// </summary>
+    /// <returns>Le nombre de modifications</returns>
     public int SaveChanges()
     {
         try
