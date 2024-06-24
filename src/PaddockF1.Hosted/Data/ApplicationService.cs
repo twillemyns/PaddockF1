@@ -30,20 +30,36 @@ public sealed class ApplicationService(ApplicationUnit appUnit)
     public IEnumerable<Topic> GetTopics(string search) => appUnit.Topics.GetAll(t => t.Title.StartsWith(search));
     
     // todo: ajout pagination voire virtualisation
+    /// <summary>
+    /// Récupère les messages d'un sujet de discussion
+    /// </summary>
+    /// <param name="topicId">ID du sujet de discussion</param>
+    /// <returns>Un énumérable de tous les messages du sujet de discussion</returns>
     public IEnumerable<Message> GetMessagesByTopicId(Guid topicId) => appUnit.Messages.GetAll(m => m.TopicId == topicId);
 
+    /// <summary>
+    /// Récupère un utilisateur par son ID
+    /// </summary>
+    /// <param name="userId">ID de l'utilisateur</param>
+    /// <returns>L'utilisateur demandé</returns>
     public ApplicationUser? GetUserById(string userId) => appUnit.Users.Get(userId);
 
     #endregion
     
     #region Add
     
+    /// <summary>
+    /// Ajoute un sujet de discussion à la base de données
+    /// </summary>
     public void AddTopic(Topic topic)
     {
         appUnit.Topics.Add(topic);
         appUnit.SaveChanges();
     }
     
+    /// <summary>
+    /// Ajoute un message à la base de données
+    /// </summary>
     public void AddMessage(Message message)
     {
         appUnit.Messages.Add(message);
@@ -55,12 +71,18 @@ public sealed class ApplicationService(ApplicationUnit appUnit)
     
     #region Delete
     
+    /// <summary>
+    /// Supprime un sujet de discussion de la base de données
+    /// </summary>
     public void DeleteTopic(Topic topic)
     {
         appUnit.Topics.Delete(topic);
         appUnit.SaveChanges();
     }
     
+    /// <summary>
+    /// Supprime un message de la base de données
+    /// </summary>
     public void DeleteMessage(Message message)
     {
         appUnit.Messages.Delete(message);
