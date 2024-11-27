@@ -43,7 +43,7 @@ builder.Services.AddScoped<ApplicationService>(provider =>
 {
     var context = provider.GetRequiredService<ApplicationDbContext>();
 
-    return new ApplicationService(new ApplicationUnit(context));
+    return new ApplicationService(context);
 } );
 
 #endregion

@@ -55,6 +55,8 @@ public partial class TopicDetail : ComponentBase
             Content = Model.Content,
         };
         ApplicationService.AddMessage(message);
+        
+        Model.Content = string.Empty;
     }
 
     private sealed class InputModel

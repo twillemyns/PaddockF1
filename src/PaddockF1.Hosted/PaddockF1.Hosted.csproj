@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PaddockF1.Abstractions\PaddockF1.Abstractions.csproj" />
     <ProjectReference Include="..\PaddockF1.Hosted.Client\PaddockF1.Hosted.Client.csproj" />
     <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />

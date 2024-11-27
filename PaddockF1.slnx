@@ -1,0 +1,8 @@
+﻿<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Project Path="src\PaddockF1.Hosted.Client\PaddockF1.Hosted.Client.csproj" Type="Classic C#" />
+  <Project Path="src\PaddockF1.Hosted\PaddockF1.Hosted.csproj" Type="Classic C#" />
+  <Project Path="tests\PaddockF1.Tests\PaddockF1.Tests.csproj" Type="Classic C#" />
+</Solution>

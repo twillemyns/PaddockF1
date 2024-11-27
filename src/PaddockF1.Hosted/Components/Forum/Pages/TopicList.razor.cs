@@ -60,6 +60,6 @@ public class InputModel
     public string Title { get; set; } = default!;
 
     [Required(ErrorMessage = "La description est obligatoire.")]
-    [StringLength(250, MinimumLength = 5, ErrorMessage = "La description doit contenir entre 5 et 250 caractères.")]
+    [StringLength(500, MinimumLength = 5, ErrorMessage = "La description doit contenir entre 5 et 500 caractères.")]
     public string Description { get; set; } = default!;
 }

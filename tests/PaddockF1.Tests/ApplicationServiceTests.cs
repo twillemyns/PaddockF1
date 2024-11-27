@@ -24,8 +24,7 @@ public class ApplicationServiceTests
             new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(_connection)
                 .Options);
         _dbContext.Database.EnsureCreated();
-        var unit = new ApplicationUnit(_dbContext);
-        _service = new ApplicationService(unit);
+        _service = new ApplicationService(_dbContext);
     }
 
     [TestCleanup]
@@ -52,7 +51,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(topic, result);
     }
-    
+
     [TestMethod]
     public void GetTopicById_ReturnNull()
     {
@@ -82,7 +81,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(2, result.Count());
     }
-    
+
     [TestMethod]
     public void GetTopics_ReturnFilteredTopics()
     {
@@ -102,7 +101,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(1, result.Count());
     }
-    
+
     [TestMethod]
     public void GetMessagesByTopicId_ReturnAllMessages()
     {
@@ -123,7 +122,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(2, result.Count());
     }
-    
+
     [TestMethod]
     public void GetUserById_ReturnCorrectUser()
     {
@@ -144,11 +143,11 @@ public class ApplicationServiceTests
     {
         // Act
         var result = _service.GetUserById(Guid.NewGuid().ToString());
-        
+
         // Assert
         Assert.IsNull(result);
     }
-    
+
     [TestMethod]
     public void AddTopic_AddsTopicCorrectly()
     {
@@ -162,7 +161,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(topic, _dbContext.Topics.First());
     }
-    
+
     [TestMethod]
     public void AddMessage_AddsMessageCorrectly()
     {
@@ -177,7 +176,7 @@ public class ApplicationServiceTests
         // Assert
         Assert.AreEqual(message, _dbContext.Messages.First());
     }
-    
+
     [TestMethod]
     public void DeleteTopic_DeletesTopicCorrectly()
     {
@@ -189,11 +188,12 @@ public class ApplicationServiceTests
 
         // Act
         _service.DeleteTopic(topic);
+        _service.SaveChanges();
 
         // Assert
         Assert.AreEqual(0, _dbContext.Topics.Count());
     }
-    
+
     [TestMethod]
     public void DeleteMessage_DeletesMessageCorrectly()
     {
@@ -206,9 +206,9 @@ public class ApplicationServiceTests
 
         // Act
         _service.DeleteMessage(message);
+        _service.SaveChanges();
 
         // Assert
         Assert.AreEqual(0, _dbContext.Messages.Count());
     }
-    
 }

@@ -27,7 +27,7 @@
 
     <AuthorizeView Context="authContext">
         <Authorized>
-            <EditForm Model="@Model" OnSubmit="Callback" class="uk-padding-remove">
+            <EditForm Model="@Model" OnSubmit="Callback" class="uk-padding-remove uk-margin">
                 <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..." @bind-Value="Model.Content" style="resize: vertical"/>
                 <button type="submit" class="uk-button uk-button-primary uk-margin">Envoyer</button>
             </EditForm>
