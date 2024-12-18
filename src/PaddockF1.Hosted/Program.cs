@@ -68,7 +68,9 @@ else
 using (var scope = app.Services.CreateScope())
 {
     var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    DbInitializer.Initialize(appDbContext);
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    await DbInitializer.InitializeData(appDbContext, userManager);
+
 }
 
 #endif

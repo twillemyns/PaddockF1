@@ -6,9 +6,9 @@ namespace PaddockF1.Hosted.Data;
 public static class DbInitializer
 {
     
-    public static void Initialize(ApplicationDbContext appDbContext)
+    public static async Task InitializeData(ApplicationDbContext appDbContext, UserManager<ApplicationUser> userManager)
     {
-        appDbContext.Database.EnsureCreated();
+        await appDbContext.Database.EnsureCreatedAsync();
 
         if (appDbContext.Users.Any())
         {
@@ -16,18 +16,21 @@ public static class DbInitializer
         }
         
         var passwordHasher = new PasswordHasher<ApplicationUser>();
-
+        
+        
         var users = new ApplicationUser[]
         {
             new()
             {
                 UserName = "admin",
+                NormalizedUserName = "ADMIN",
                 Email = "admin@admin.com",
                 EmailConfirmed = true
             },
             new()
             {
                 UserName = "user",
+                NormalizedUserName = "USER",
                 Email = "user@user.com",
                 EmailConfirmed = true
             }
@@ -35,11 +38,16 @@ public static class DbInitializer
 
         foreach (var user in users)
         {
+            await userManager.CreateAsync(user, user.UserName!);
+        }
+        
+        foreach (var user in users)
+        {
             user.PasswordHash = passwordHasher.HashPassword(user, user.UserName!);
         }
         
         appDbContext.Users.AddRange(users);
-        appDbContext.SaveChanges();
+        await appDbContext.SaveChangesAsync();
         
         var topics = new Topic[]
         {
@@ -95,7 +103,7 @@ public static class DbInitializer
         };
         
         appDbContext.Messages.AddRange(messages);
-        appDbContext.SaveChanges();
+        await appDbContext.SaveChangesAsync();
 
     }
 }
