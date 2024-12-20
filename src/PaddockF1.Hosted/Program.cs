@@ -13,6 +13,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+
+
 #region authentification
 
 builder.Services.AddCascadingAuthenticationState();
@@ -48,6 +50,8 @@ builder.Services.AddScoped<ApplicationService>(provider =>
 } );
 
 #endregion
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
 
