@@ -13,8 +13,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-
-
 #region authentification
 
 builder.Services.AddCascadingAuthenticationState();
