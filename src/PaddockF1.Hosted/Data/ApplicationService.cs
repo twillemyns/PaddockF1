@@ -35,7 +35,12 @@ public sealed class ApplicationService(ApplicationDbContext dbContext)
         dbContext.Messages.Include(m => m.User).Where(m => m.TopicId == topicId);
 
     public ApplicationUser? GetUserById(string userId) => dbContext.Users.Find(userId);
-
+    
+    public IEnumerable<string> GetRolesByUser(ApplicationUser user)
+    {
+        var rolesId = dbContext.UserRoles.Where(ur => ur.UserId == user.Id).Select(ur => ur.RoleId);
+        return dbContext.Roles.Where(r => rolesId.Contains(r.Id)).Select(r => r.Name!);
+    }
     #endregion
 
     #region Add
