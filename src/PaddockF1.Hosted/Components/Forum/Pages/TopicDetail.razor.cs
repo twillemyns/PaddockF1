@@ -72,6 +72,8 @@ public partial class TopicDetail : ComponentBase
 
     private void DeleteTopic()
     {
-        throw new NotImplementedException();
+        ApplicationService.DeleteTopic(_topic!);
+        ApplicationService.SaveChanges();
+        NavigationManager.NavigateTo("/forum");
     }
 }

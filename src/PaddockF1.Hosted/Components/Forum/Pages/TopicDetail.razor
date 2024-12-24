@@ -19,14 +19,38 @@
                 </button>
             </div>
             <div>
-                <button class="uk-button uk-button-primary uk-height-1-1 uk-border-rounded" @onclick="DeleteTopic"><span
-                        uk-icon="icon: trash"></span></button>
+                <button class="uk-button uk-button-primary uk-height-1-1 uk-border-rounded"
+                        uk-toggle="target: #modal-confirm-delete">
+                    <span uk-icon="icon: trash"></span>
+                </button>
             </div>
         </div>
     }
 </div>
 
 <TopicForm InputModel="_topic"/>
+
+@if (_userRoles.Contains("Admin") || _topic.Author == _user)
+{
+    <div id="modal-confirm-delete" uk-modal>
+        <div class="uk-modal-body uk-modal-dialog">
+            <h4 class="uk-modal-title">
+                Confirmation de suppression
+            </h4>
+            <p>
+                Êtes-vous sûr de vouloir supprimer ce sujet de discussion ?
+            </p>
+            <div class="uk-flex uk-flex-between">
+                <button class="uk-button uk-button-secondary uk-border-rounded uk-modal-close">
+                    Annuler
+                </button>
+                <button class="uk-button uk-button-primary uk-border-rounded" @onclick="DeleteTopic">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+}
 
 @* Liste tags *@
 
@@ -39,7 +63,8 @@
             <div class="uk-card-header">
                 <h5>@message.User.UserName</h5>
                 <p class="uk-text-meta">
-                    Envoyé le @message.CreatedAt.ToString("d MMMM yyyy à H:mm", CultureInfo.CreateSpecificCulture("fr-FR"))
+                    Envoyé
+                    le @message.CreatedAt.ToString("d MMMM yyyy à H:mm", CultureInfo.CreateSpecificCulture("fr-FR"))
                 </p>
             </div>
             <div class="uk-card-body">

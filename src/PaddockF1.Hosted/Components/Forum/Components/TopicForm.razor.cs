@@ -65,14 +65,3 @@ public partial class TopicForm
         NavigationManager.Refresh(true);
     }
 }
-
-// public class InputModel
-// {
-//     [Required(ErrorMessage = "Le titre est obligatoire.")]
-//     [StringLength(50, MinimumLength = 3, ErrorMessage = "Le titre doit contenir entre 3 et 50 caractères.")]
-//     public string Title { get; set; } = default!;
-//
-//     [Required(ErrorMessage = "La description est obligatoire.")]
-//     [StringLength(500, MinimumLength = 5, ErrorMessage = "La description doit contenir entre 5 et 500 caractères.")]
-//     public string Description { get; set; } = default!;
-// }
