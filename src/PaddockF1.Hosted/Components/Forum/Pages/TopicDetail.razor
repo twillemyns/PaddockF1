@@ -1,5 +1,6 @@
 ﻿@page "/forum/{id}"
 @using System.Globalization
+@using PaddockF1.Hosted.Components.Forum.Components
 
 @rendermode InteractiveServer
 
@@ -12,8 +13,10 @@
     {
         <div class="uk-grid-large uk-width-1-3" uk-grid>
             <div>
-                <button class="uk-button uk-button-secondary uk-height-1-1 uk-border-rounded" @onclick="EditTopic"><span
-                        uk-icon="icon: pencil"></span></button>
+                <button class="uk-button uk-button-secondary uk-height-1-1 uk-border-rounded"
+                        uk-toggle="target: #modal-creation" type="button">
+                    <span uk-icon="icon: pencil"></span>
+                </button>
             </div>
             <div>
                 <button class="uk-button uk-button-primary uk-height-1-1 uk-border-rounded" @onclick="DeleteTopic"><span
@@ -22,6 +25,8 @@
         </div>
     }
 </div>
+
+<TopicForm InputModel="_topic"/>
 
 @* Liste tags *@
 
@@ -33,7 +38,9 @@
         <div class="uk-card uk-card-small uk-card-default">
             <div class="uk-card-header">
                 <h5>@message.User.UserName</h5>
-                <p class="uk-text-meta">Envoyé le @message.CreatedAt.ToString("d MMMM yyyy à H:mm", CultureInfo.CreateSpecificCulture("fr-FR"))</p>
+                <p class="uk-text-meta">
+                    Envoyé le @message.CreatedAt.ToString("d MMMM yyyy à H:mm", CultureInfo.CreateSpecificCulture("fr-FR"))
+                </p>
             </div>
             <div class="uk-card-body">
                 <p>@message.Content</p>
@@ -44,12 +51,15 @@
     <AuthorizeView Context="authContext">
         <Authorized>
             <EditForm Model="@Model" OnSubmit="Callback" class="uk-padding-remove uk-margin">
-                <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..." @bind-Value="Model.Content" style="resize: vertical"/>
+                <InputTextArea class="uk-textarea" placeholder="Ecrivez votre message ici..."
+                               @bind-Value="Model.Content" style="resize: vertical"/>
                 <button type="submit" class="uk-button uk-button-primary uk-margin">Envoyer</button>
             </EditForm>
         </Authorized>
         <NotAuthorized>
-            <a href="/Account/Login" class="uk-button uk-button-primary uk-border-rounded uk-margin">Si vous souhaitez interagir dans ce forum, connectez-vous ici</a>
+            <a href="/Account/Login" class="uk-button uk-button-primary uk-border-rounded uk-margin">
+                Si vous souhaitez interagir dans ce forum, connectez-vous ici
+            </a>
         </NotAuthorized>
     </AuthorizeView>
 

@@ -1,4 +1,5 @@
 ﻿@page "/forum"
+@using PaddockF1.Hosted.Components.Forum.Components
 @rendermode InteractiveServer
 
 <PageTitle>Forum - PaddockF1</PageTitle>
@@ -11,27 +12,7 @@
     </Authorized>
 </AuthorizeView>
 
-<div id="modal-creation" uk-modal>
-    <div class="uk-modal-body uk-modal-dialog">
-        <h4 class="uk-modal-title">
-            Création d'un nouveau sujet de discussion
-        </h4>
-        <EditForm class="uk-form-stacked" Model="NewTopic" OnValidSubmit="CreateTopic">
-            <DataAnnotationsValidator />
-            <div class="uk-margin">
-                <label class="uk-form-label">Titre :</label>
-                <InputText class="uk-input" @bind-Value="@NewTopic.Title"/>
-                <ValidationMessage For="() => NewTopic.Title" class="uk-text-danger"/>
-            </div>
-            <div class="uk-margin">
-                <label class="uk-form-label">Description :</label>
-                <InputTextArea class="uk-textarea" @bind-Value="@NewTopic.Description" style="resize: vertical"/>
-                <ValidationMessage For="() => NewTopic.Description" class="uk-text-danger"/>
-            </div>
-            <button type="submit" class="uk-button uk-button-primary uk-border-rounded">Créer</button>
-        </EditForm>
-    </div>
-</div>
+<TopicForm/>
 
 @* todo : filtre + recherche *@
 

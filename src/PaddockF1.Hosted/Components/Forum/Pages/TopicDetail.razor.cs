@@ -70,11 +70,6 @@ public partial class TopicDetail : ComponentBase
         public string Content { get; set; } = string.Empty;
     }
 
-    private void EditTopic()
-    {
-        throw new NotImplementedException();
-    }
-
     private void DeleteTopic()
     {
         throw new NotImplementedException();
