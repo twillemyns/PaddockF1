@@ -21,6 +21,8 @@ public partial class TopicDetail : ComponentBase
     private Topic? _topic;
 
     private ApplicationUser? _user;
+    
+    private List<string> _userRoles = [];
 
     protected override void OnInitialized()
     {
@@ -42,6 +44,12 @@ public partial class TopicDetail : ComponentBase
         var userUtilities = new UserUtilities(AuthenticationStateProvider, ApplicationService);
 
         _user = await userUtilities.GetCurrentUser();
+        if (_user is not null)
+        {
+            _userRoles = ApplicationService.GetRolesByUser(_user).ToList();
+        }
+        
+        StateHasChanged();
     }
 
     private void Callback()
@@ -55,10 +63,19 @@ public partial class TopicDetail : ComponentBase
             Content = Model.Content,
         };
         ApplicationService.AddMessage(message);
+
+        Model.Content = string.Empty;
     }
 
     private sealed class InputModel
     {
         public string Content { get; set; } = string.Empty;
+    }
+
+    private void DeleteTopic()
+    {
+        ApplicationService.DeleteTopic(_topic!);
+        ApplicationService.SaveChanges();
+        NavigationManager.NavigateTo("/forum");
     }
 }

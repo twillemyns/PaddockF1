@@ -1,0 +1,240 @@
+﻿@page "/admin/profile/{id}"
+@using Microsoft.AspNetCore.Authorization
+@using PaddockF1.Hosted.Data
+@using PaddockF1.Hosted.Data.Models
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext AppContext
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavigationManager
+@inject IJSRuntime Js
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
+<PageTitle>Vue du profil - @_user.UserName</PageTitle>
+
+<h2>Vue de l'utilisateur "@_user.UserName"</h2>
+
+<div class="uk-card uk-card-default uk-card-body">
+    <div class="uk-grid-small uk-child-width-expand@s uk-text-center" uk-grid>
+        <div>
+            <div class="uk-card uk-card-default uk-card-body">
+                <h3 class="uk-card-title">Informations personnelles</h3>
+                <p>Nom d'utilisateur: @_user.UserName</p>
+                <p>Email: @_user.Email</p>
+                @if (_user.EmailConfirmed)
+                {
+                    <p>Mail confirmé: <span class="uk-icon" uk-icon="icon: check; ratio: 1.5"></span></p>
+                }
+                else
+                {
+                    <p>Mail confirmé: <span class="uk-icon" uk-icon="icon: close; ratio: 1.5"></span></p>
+                }
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-card-default uk-card-body">
+                <h3 class="uk-card-title">Informations de connexion</h3>
+                <p>Nombre de connexions: @_user.AccessFailedCount</p>
+                @if (_user.LockoutEnabled)
+                {
+                    <p>Verrouillé: <span class="uk-icon" uk-icon="icon: check; ratio: 1.5"></span></p>
+                }
+                else
+                {
+                    <p>Verrouillé: <span class="uk-icon" uk-icon="icon: close; ratio: 1.5"></span></p>
+                }
+                @if (_user.LockoutEnd != null)
+                {
+                    <p>Verrouillé jusqu'au: @_user.LockoutEnd.Value.ToString("dd MMM yyyy à HH:mm") </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Options</h3>
+
+<div class="uk-card uk-card-default uk-card-small uk-card-body uk-border-rounded">
+    <div class="uk-flex-around" uk-grid>
+        <a class="uk-button uk-button-default uk-border-rounded" @onclick="ShowMessages">Voir les messages</a>
+        <button class="uk-button uk-button-secondary uk-border-rounded" type="button"
+                uk-toggle="target: #modal-manageRole">
+            Gestion des rôles
+        </button>
+        <button class="uk-button uk-button-primary uk-border-rounded" type="button"
+                uk-toggle="target: #modal-lockAccount">
+            Verrouiller le profil
+        </button>
+        <button class="uk-button uk-button-primary uk-border-rounded" type="button"
+                uk-toggle="target: #modal-deleteAccount">
+            Supprimer le profil
+        </button>
+    </div>
+</div>
+
+<div id="modal-lockAccount" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">Verrouiller le profil</h2>
+        <p>Êtes-vous sûr de vouloir verrouiller le profil de l'utilisateur ?</p>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+            <button class="uk-button uk-button-primary" type="button" @onclick="BlockProfile">Verrouiller</button>
+        </p>
+    </div>
+</div>
+
+<div id="modal-deleteAccount" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">Supprimer le profil</h2>
+        <p>Êtes-vous sûr de vouloir supprimer le profil de l'utilisateur ?</p>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Annuler</button>
+            <button class="uk-button uk-button-primary" type="button" @onclick="DeleteProfile">Supprimer</button>
+        </p>
+    </div>
+</div>
+
+<div id="modal-manageRole" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <h2 class="uk-modal-title">Gestion des rôles</h2>
+            <QuickGrid Items="AppContext.Roles" Class="uk-table uk-table-divider">
+                <PropertyColumn Property="r => r.Name"/>
+                <TemplateColumn Title="Actions">
+                @if (_userRoles.Any(ur => ur.RoleId == context.Id))
+                {
+                    <button class="uk-button uk-button-link uk-link-reset" @onclick="() => RemoveRole(context)">
+                        <span uk-icon="icon: minus"></span>
+                    </button>
+                }
+                else
+                {
+                    <button class="uk-button uk-button-link uk-link-reset" @onclick="() => AddRole(context)">
+                        <span uk-icon="icon: plus"></span>
+                    </button>
+                }
+                </TemplateColumn>
+            </QuickGrid>
+        <p class="uk-text-right">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Fermer</button>
+        </p>
+    </div>
+</div>
+
+@if (_showMessages)
+{
+    <div class="uk-card uk-card-default uk-card-body uk-border-rounded uk-margin-top uk-margin-bottom">
+        <h4 class="uk-card-title">Liste des messages de l'utilisateur</h4>
+        <QuickGrid Items="@_user.Messages.AsQueryable()" Class="uk-table uk-table-divider">
+            <PropertyColumn Title="Sujet de discussion" Property="m => m.Topic.Title "/>
+            <PropertyColumn Title="Contenu" Property="m => m.Content "/>
+            <PropertyColumn Title="Date et heure d'envoi" Property="m => m.CreatedAt " Format="dd MMM yyyy à HH:mm"/>
+        </QuickGrid>
+    </div>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = null!;
+
+    private ApplicationUser _user = null!;
+    
+    private IQueryable<IdentityUserRole<string>> _userRoles = null!;
+
+    private bool _showMessages;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            _user = AppContext.Users.Single(u => u.Id == Id);
+            // var userRoles = AppContext.UserRoles.Where(ur => ur.UserId == _user.Id).Join();
+            _userRoles = AppContext.UserRoles.Where(ur => ur.UserId == _user.Id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void ShowMessages()
+    {
+        _showMessages = true;
+
+        _user.Messages = AppContext.Messages.Where(m => m.UserId == _user.Id).Include(m => m.Topic).ToList();
+    }
+
+    private async Task BlockProfile()
+    {
+        _user.LockoutEnabled = true;
+        var result = await UserManager.SetLockoutEndDateAsync(_user, DateTimeOffset.UtcNow.AddDays(30));
+
+        if (!result.Succeeded)
+        {
+            Console.WriteLine("Erreur lors du verrouillage du profil");
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+    }
+
+    private async Task DeleteProfile()
+    {
+        var result = await UserManager.DeleteAsync(_user);
+
+        if (!result.Succeeded)
+        {
+            Console.WriteLine("Erreur lors de la suppression du profil");
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+        else
+        {
+            await Js.InvokeVoidAsync("alert", "Profil supprimé avec succès");
+            NavigationManager.NavigateTo("/admin/ControlPanel", true);
+        }
+    }
+
+    private async Task AddRole(IdentityRole context)
+    {
+        Console.WriteLine("Ajout du rôle " + context.Name);
+        var result = await UserManager.AddToRoleAsync(_user, context.Name!);
+        if (result.Succeeded)
+        {
+            _userRoles = AppContext.UserRoles.Where(ur => ur.UserId == _user.Id);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Erreur lors de l'ajout du rôle");
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+    }
+    
+    private async Task RemoveRole(IdentityRole context)
+    {
+        Console.WriteLine("Suppression du rôle " + context.Name);
+        var result = await UserManager.RemoveFromRoleAsync(_user, context.Name!);
+        if (result.Succeeded)
+        {
+            _userRoles = AppContext.UserRoles.Where(ur => ur.UserId == _user.Id);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Erreur lors de la suppression du rôle");
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+    }
+
+}

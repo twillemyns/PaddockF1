@@ -6,13 +6,17 @@
 <div class="body">
     <div>
         <header>
-            <nav class="uk-navbar-container uk-navbar-primary uk-navbar" style="padding: 0 20px 0 20px; height: 80px" uk-navbar>
+            <nav class="uk-navbar-container uk-navbar-primary uk-navbar" style="padding: 0 20px 0 20px; height: 80px"
+                 uk-navbar>
                 <div class="uk-navbar-left">
                     <ul class="uk-navbar-nav">
-                        <li><a>Pilotes</a></li>
-                        <li><a>Ecuries</a></li>
-                        <li><a>Calendrier</a></li>
+                        <li><a uk-tooltip="title: Développement en cours; pos: bottom">Pilotes</a></li>
+                        <li><a uk-tooltip="title: Développement en cours; pos: bottom">Ecuries</a></li>
+                        <li><a uk-tooltip="title: Développement en cours; pos: bottom">Calendrier</a></li>
                         <li><a href="/forum">Forum</a></li>
+                        <AuthorizeView Roles="Admin">
+                            <li><a href="/admin/ControlPanel">Administration</a></li>
+                        </AuthorizeView>
                     </ul>
                 </div>
                 <div class="uk-navbar-center">
@@ -44,12 +48,14 @@
                             <NotAuthorized>
                                 <li>
                                     <NavLink href="Account/Login">
-                                        <button class="uk-button uk-button-primary uk-border-rounded">Se connecter</button>
+                                        <button class="uk-button uk-button-primary uk-border-rounded">Se connecter
+                                        </button>
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink href="Account/Register">
-                                        <button class="uk-button uk-button-primary uk-border-rounded">S'inscrire</button>
+                                        <button class="uk-button uk-button-primary uk-border-rounded">S'inscrire
+                                        </button>
                                     </NavLink>
                                 </li>
                             </NotAuthorized>
@@ -64,13 +70,15 @@
     </div>
 
     <footer>
-        <div class="uk-navbar-container uk-padding-small uk-navbar" style="padding: 20px 40px 20px 40px; bottom: 0; background-color: #2d2d2d" uk-navbar>
+        <div class="uk-navbar-container uk-padding-small uk-navbar"
+             style="padding: 20px 40px 20px 40px; bottom: 0; background-color: #2d2d2d" uk-navbar>
             <div class="uk-navbar-left">
-                <a href="/" class="uk-navbar-item uk-logo uk-link-muted" style="font-family: Payback,serif; font-size: 30px">PaddockF1</a>
+                <a href="/" class="uk-navbar-item uk-logo uk-link-muted"
+                   style="font-family: Payback,serif; font-size: 30px">PaddockF1</a>
             </div>
             <div class="uk-navbar-center">
                 <ul class="uk-margin-remove uk-list uk-link-muted">
-                    <li >
+                    <li>
                         <a href="#">Pilotes</a>
                     </li>
                     <li class="uk-margin-remove">

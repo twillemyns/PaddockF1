@@ -33,6 +33,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -43,10 +44,12 @@ builder.Services.AddScoped<ApplicationService>(provider =>
 {
     var context = provider.GetRequiredService<ApplicationDbContext>();
 
-    return new ApplicationService(new ApplicationUnit(context));
+    return new ApplicationService(context);
 } );
 
 #endregion
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
 
@@ -67,9 +70,13 @@ else
 
 using (var scope = app.Services.CreateScope())
 {
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await DbInitializer.InitializeRolesAsync(roleManager);
+    
     var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    await DbInitializer.InitializeData(appDbContext, userManager);
+    await DbInitializer.InitializeDataAsync(appDbContext, userManager);
+
 
 }
 

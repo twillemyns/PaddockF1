@@ -5,8 +5,20 @@ namespace PaddockF1.Hosted.Data;
 
 public static class DbInitializer
 {
+    public static async Task InitializeRolesAsync(RoleManager<IdentityRole> roleManager)
+    {
+        string[] roleNames = ["Admin", "User"];
     
-    public static async Task InitializeData(ApplicationDbContext appDbContext, UserManager<ApplicationUser> userManager)
+        foreach (var roleName in roleNames)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
+    }
+    
+    public static async Task InitializeDataAsync(ApplicationDbContext appDbContext, UserManager<ApplicationUser> userManager)
     {
         await appDbContext.Database.EnsureCreatedAsync();
 
@@ -48,6 +60,9 @@ public static class DbInitializer
         
         appDbContext.Users.AddRange(users);
         await appDbContext.SaveChangesAsync();
+
+        await userManager.AddToRolesAsync(users[0], ["Admin", "User"]);
+        await userManager.AddToRoleAsync(users[1], "User");
         
         var topics = new Topic[]
         {

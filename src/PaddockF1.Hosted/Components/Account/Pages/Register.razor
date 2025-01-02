@@ -9,6 +9,7 @@
 @using PaddockF1.Hosted.Data.Models
 
 @inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
 @inject IUserStore<ApplicationUser> UserStore
 @inject SignInManager<ApplicationUser> SignInManager
 @inject IEmailSender<ApplicationUser> EmailSender
@@ -51,13 +52,13 @@
             <button type="submit" class="uk-button uk-button-primary uk-border-rounded">S'incrire</button>
         </EditForm>
     </div>
-    <div class="">
-        <section>
-            <h3>Utilisez un autre service pour vous inscrire.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
+    @* <div class=""> *@
+    @*     <section> *@
+    @*         <h3>Utilisez un autre service pour vous inscrire.</h3> *@
+    @*         <hr /> *@
+    @*         <ExternalLoginPicker /> *@
+    @*     </section> *@
+    @* </div> *@
 </div>
 
 @code {
@@ -79,14 +80,16 @@
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await UserManager.CreateAsync(user, Input.Password);
-
+        
         if (!result.Succeeded)
         {
             identityErrors = result.Errors;
             return;
         }
+        
+        await UserManager.AddToRoleAsync(user, "User");
 
-        Logger.LogInformation("L'utilisateur à créé un nouveau compte avec mot de passe.");
+        Logger.LogInformation("L'utilisateur à créé un nouveau compte avec mot de passe et rôle Utilisateur.");
 
         var userId = await UserManager.GetUserIdAsync(user);
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);

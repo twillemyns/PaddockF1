@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace PaddockF1.Hosted.Data.Models;
@@ -16,4 +17,7 @@ public class ApplicationUser : IdentityUser
     /// Liste des messages postés par l'utilisateur
     /// </summary>
     public IEnumerable<Message> Messages { get; set; } = new List<Message>();
+
+    [NotMapped]
+    public IEnumerable<string> Roles { get; set; } = new List<string>();
 }

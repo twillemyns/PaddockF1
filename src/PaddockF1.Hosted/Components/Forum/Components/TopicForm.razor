@@ -1,0 +1,32 @@
+﻿<div id="modal-creation" uk-modal>
+    <div class="uk-modal-body uk-modal-dialog">
+        <h4 class="uk-modal-title">
+            Création d'un nouveau sujet de discussion
+        </h4>
+        <EditForm class="uk-form-stacked" Model="InputModel" OnValidSubmit="ValidSubmitAction" FormName="EditTopic">
+            <DataAnnotationsValidator/>
+            <div class="uk-margin">
+                <label class="uk-form-label">Titre :</label>
+                <InputText class="uk-input" @bind-Value="@InputModel.Title"/>
+                <ValidationMessage For="() => InputModel.Title" class="uk-text-danger"/>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label">Description :</label>
+                <InputTextArea class="uk-textarea" @bind-Value="@InputModel.Description" style="resize: vertical"/>
+                <ValidationMessage For="() => InputModel.Description" class="uk-text-danger"/>
+            </div>
+            @if (InputModel.Title != string.Empty)
+            {
+                <button type="submit" class="uk-button uk-button-primary uk-border-rounded">
+                    Modifier
+                </button>
+            }
+            else
+            {
+                <button type="submit" class="uk-button uk-button-primary uk-border-rounded">
+                    Créer
+                </button>
+            }
+        </EditForm>
+    </div>
+</div>
