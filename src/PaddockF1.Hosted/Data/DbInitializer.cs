@@ -60,7 +60,7 @@ public static class DbInitializer
         
         appDbContext.Users.AddRange(users);
         await appDbContext.SaveChangesAsync();
-        
+
         await userManager.AddToRolesAsync(users[0], ["Admin", "User"]);
         await userManager.AddToRoleAsync(users[1], "User");
         

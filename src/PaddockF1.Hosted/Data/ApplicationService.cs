@@ -44,13 +44,18 @@ public sealed class ApplicationService(ApplicationDbContext dbContext)
     #endregion
 
     #region Add
-
+    /// <summary>
+    /// Ajoute un sujet de discussion à la base de données
+    /// </summary>
     public void AddTopic(Topic topic)
     {
         dbContext.Topics.Add(topic);
         dbContext.SaveChanges();
     }
 
+    /// <summary>
+    /// Ajoute un message à la base de données
+    /// </summary>
     public void AddMessage(Message message)
     {
         dbContext.Messages.Add(message);
@@ -61,7 +66,6 @@ public sealed class ApplicationService(ApplicationDbContext dbContext)
 
 
     #region Delete
-
     public void DeleteTopic(Topic topic) => dbContext.Topics.Remove(topic);
 
     public void DeleteMessage(Message message) => dbContext.Messages.Remove(message);

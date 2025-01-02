@@ -77,6 +77,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await DbInitializer.InitializeDataAsync(appDbContext, userManager);
 
+
 }
 
 #endif
