@@ -48,6 +48,8 @@ public partial class TopicDetail : ComponentBase
         {
             _userRoles = ApplicationService.GetRolesByUser(_user).ToList();
         }
+        
+        StateHasChanged();
     }
 
     private void Callback()
