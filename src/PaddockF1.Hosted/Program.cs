@@ -1,3 +1,5 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,10 +29,27 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("MySQL") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8,0,41))));
-    // options.UseSqlServer(connectionString));
+{
+    var keyVaultUri = "https://dbpwd.vault.azure.net";
+
+    var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential());
+
+    var secret = client.GetSecret("DbPassword");
+    
+    if (builder.Environment.IsDevelopment())
+    {
+        var connectionString = builder.Configuration.GetConnectionString("Development") ??
+                               throw new InvalidOperationException("Connection string 'Development' not found.");
+        options.UseMySql(connectionString + secret.Value.Value, new MySqlServerVersion(new Version(8, 0, 41)));
+    }
+    else if (builder.Environment.IsProduction())
+    {
+        var connectionString = builder.Configuration.GetConnectionString("Production") ??
+                               throw new InvalidOperationException("Connection string 'Production' not found.");
+        options.UseMySql(connectionString + secret.Value.Value, new MySqlServerVersion(new Version(8, 0)));
+    }
+});
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -46,7 +65,7 @@ builder.Services.AddScoped<ApplicationService>(provider =>
     var context = provider.GetRequiredService<ApplicationDbContext>();
 
     return new ApplicationService(context);
-} );
+});
 
 #endregion
 
@@ -73,12 +92,10 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await DbInitializer.InitializeRolesAsync(roleManager);
-    
+
     var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await DbInitializer.InitializeDataAsync(appDbContext, userManager);
-
-
 }
 
 #endif
