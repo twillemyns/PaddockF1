@@ -90,12 +90,10 @@ else
 
 using (var scope = app.Services.CreateScope())
 {
-    var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    appDbContext.Database.Migrate();
-
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await DbInitializer.InitializeRolesAsync(roleManager);
     
+    var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     await DbInitializer.InitializeDataAsync(appDbContext, userManager);
 }
