@@ -1,9 +1,8 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
+﻿using Azure;
+using Azure.Communication.Email;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Identity;
-using MimeKit;
-using MimeKit.Text;
-using PaddockF1.Hosted.Data;
 using PaddockF1.Hosted.Data.Models;
 
 namespace PaddockF1.Hosted.Components.Account;
@@ -34,27 +33,22 @@ public class EmailSender : IEmailSender<ApplicationUser>
 
     private async Task Execute(string subject, string message, string toEmail)
     {
-        var email = new MimeMessage();
-        email.From.Add(MailboxAddress.Parse("cathryn.graham@ethereal.email"));
-        email.To.Add(MailboxAddress.Parse(toEmail));
-        email.Subject = subject;
-        email.Body = new TextPart(TextFormat.Html)
-        {
-            Text = message
-        };
+        const string keyVaultUri = "https://dbpwd.vault.azure.net";
+        var client = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential());
+        var secret = await client.GetSecretAsync("smtp-string");
+        var connectionString = secret.Value.Value;
+        
+        var emailClient = new EmailClient(connectionString);
 
-        // Envoi via SMTP avec MailKit et Ethereal (serveur de test)
-        using var client = new SmtpClient();
-        await client.ConnectAsync("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync("cathryn.graham@ethereal.email", "sPbbrkp8JzmZbMkNNj");
-        await client.SendAsync(email);
-        await client.DisconnectAsync(true);
+        var email = new EmailMessage(
+            senderAddress: "DoNotReply@5e23fcf6-bfcd-4ac1-a03d-d69107ac1538.azurecomm.net",
+            content: new EmailContent(subject)
+            {
+                Html = message
+            },
+            recipients: new EmailRecipients(new List<EmailAddress> { new(toEmail) })
+        );
 
-        // Envoi via SMTP avec MailKit et SMTP Gmail
-        // using var client = new SmtpClient();
-        // await client.ConnectAsync("smtp-relay.gmail.com", 587, SecureSocketOptions.StartTls);
-        // await client.AuthenticateAsync("willemynstheo@gmail.com", configuration["AccountPassword"]);
-        // await client.SendAsync(email);
-        // await client.DisconnectAsync(true);
+        await emailClient.SendAsync(WaitUntil.Completed, email);
     }
 }
